@@ -1,17 +1,26 @@
 <template>
   <div class="playlists__item playlist">
-    <div class="playlist__img">
+    <div v-if="playlist.images && playlist.images[0]" class="playlist__img">
       <img :src="playlist.images[0].url" alt="Playlist photo">
+    </div>
+    <div v-else class="playlist__img--placeholder">
+      <folder-icon />
     </div>
     <h3 class="playlist__title">{{ playlist.name }}</h3>
   </div>
 </template>
 
 <script>
+import FolderIcon from '@/components/FolderIcon'
+
 export default {
+  name: 'PlaylistComp',
   props: {
     playlist: Object,
-  }
+  },
+  components: {
+    FolderIcon
+  },
 }
 </script>
 
@@ -33,7 +42,13 @@ export default {
   &__img{
     img{
       width: 100%;
+      height: 100%;
     }
+  }
+  &__img--placeholder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   &__title{
     margin-top: 10px;

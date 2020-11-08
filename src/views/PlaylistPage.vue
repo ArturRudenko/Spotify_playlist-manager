@@ -3,8 +3,11 @@
     <div class="playlist-page__content">
       <div class="playlist-page__meta playlist-meta">
         <div class="playlist-meta__left">
-          <div class="playlist-meta__img">
+          <div v-if="playlistData.images && playlistData.images[0]" class="playlist-meta__img">
             <img :src="playlistData.images[0].url" alt="Playlist photo">
+          </div>
+          <div v-else class="playlist-meta__img--placeholder">
+            <folder-icon />
           </div>
         </div>
         <div class="playlist-meta__right">
@@ -13,7 +16,7 @@
       </div>
       <div class="playlist-page__track-list track-list__items">
         <Track v-for="(track, index) in tracks"
-               :key="track.track.id" 
+               :key="track.track.id"
                :track="track"
                :num="index"/>
       </div>
@@ -22,35 +25,36 @@
 </template>
 
 <script>
+import FolderIcon from '@/components/FolderIcon'
 import Track from '@/components/Track'
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'PlaylistPage',
   data: function () {
     return {
       playlistData: {},
       tracks: [],
+      playlistId: this.$route.params.playlist_id,
     }
   },
   components: {
     Track,
-  },
-  computed: {
-    ...mapActions('account', ['getPlaylist', 'getTracks']),
+    FolderIcon,
   },
   async created() {
-    await this.$spotify.playlist(this.$route.params.playlist_id)
-        .then(response => {
-          this.playlistData = response.data
-          console.log(this.playlistData)
-        })
-        .catch(error => console.log(error))
-    await this.$spotify.tracks(this.$route.params.playlist_id)
-        .then(response => {
-          this.tracks = response.data.items
-          console.log(this.tracks)
-        })
-        .catch(error => console.log(error))
+    this.getPlaylist(this.playlistId)
+      .then(response => {
+        this.playlistData = response.data;
+      })
+
+    this.getTracks(this.playlistId)
+      .then(response => {
+        this.tracks = response.data.items
+      })
+  },
+  methods: {
+    ...mapActions('playlist', ['getPlaylist', 'getTracks'])
   }
 }
 </script>
@@ -73,11 +77,19 @@ export default {
       font-size: 3.6em;
       line-height: 1em;
     }
-    &__img{
+    &__img,
+    &__img--placeholder{
       width: 320px;
-      img{
-        width: 100%;
-      }
+      height: 320px;
+    }
+    &__img img{
+      width: 100%;
+    }
+    &__img--placeholder{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, .3);
     }
   }
 }

@@ -10,6 +10,7 @@ import HeaderComp from "@/components/HeaderComp";
 import {mapActions} from "vuex";
 
 export default {
+  name: 'Account',
   components: {
     HeaderComp
   },
@@ -17,9 +18,8 @@ export default {
     ...mapActions('account', ['getAccountData']),
   },
   async created() {
-    await this.getAccountData()
+    this.getAccountData()
         .then(response => console.log(response))
-        .catch(error => console.log(error))
   }
 }
 </script>

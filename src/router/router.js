@@ -10,6 +10,7 @@ import Login from '@/views/Login'
 import Callback from '@/views/Callback'
 import Playlists from '@/views/Playlists'
 import PlaylistPage from '@/views/PlaylistPage'
+import Search from "@/views/Search";
 
 import auth from './middlewares/auth'
 
@@ -54,6 +55,11 @@ const router = new Router({
               component: PlaylistPage,
               props: true
             },
+            {
+              path: 'search',
+              name: 'search',
+              component: Search
+            }
           ]
         }
       ]

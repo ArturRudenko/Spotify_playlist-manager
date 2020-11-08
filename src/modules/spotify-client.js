@@ -9,12 +9,21 @@ export default class SpotifyClient {
   }
 
   setHttpClient(httpClient) {
-    if (!httpClient) throw new Error('http is not defined')
+    if (!httpClient) throw new Error('http-client is not defined')
 
     httpClient.defaults.baseURL = this.configs.host;
     httpClient.defaults.mode = 'cors';
     httpClient.defaults.headers.common['Accept'] = 'application/json';
+    httpClient.defaults.headers.common['Content-Type'] = 'application/json';
+
     this.httpClient = httpClient;
+
+    this.httpClient.interceptors.response.use(function (response) {
+      return response;
+    }, function (error) {
+      console.error(error.response);
+      return Promise.reject(error);
+    });
   }
 
   prepScopes() {
@@ -44,8 +53,8 @@ export default class SpotifyClient {
     return this.httpClient.get('/v1/me')
   }
 
-  async playlists(userId) {
-    return this.httpClient.get(`/v1/users/${userId}/playlists`)
+  async playlists(userId, { limit, offset }) {
+    return this.httpClient.get(`/v1/users/${userId}/playlists?limit=${limit}&offset=${offset}`)
   }
 
   async playlist(playlistId) {
@@ -54,6 +63,19 @@ export default class SpotifyClient {
 
   async tracks(playlistId) {
     return this.httpClient.get(`/v1/playlists/${playlistId}/tracks`)
+  }
+
+  async createPlaylist(userId, playlistName, playlistIsPublic) {
+    const body = {
+      'name': `${playlistName}`,
+      'public': playlistIsPublic
+    }
+
+    return this.httpClient.post(`/v1/users/${userId}/playlists`, body)
+  }
+
+  async search(query) {
+    return this.httpClient.get(`/v1/search?q=${encodeURIComponent(query)}&type=album,artist,playlist,track,show,episode`)
   }
 
   async token({ code }) {

@@ -9,6 +9,7 @@ import { mapActions } from 'vuex'
 import urlParamsCompiler from "@/utils/urlParams-compiler";
 
 export default {
+  name: 'Callback',
   data: function () {
     return {
       isError: false

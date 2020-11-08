@@ -8,7 +8,7 @@
           <p v-else>Name</p>
         </div>
         <div class="user-info__img">
-          <img src="../assets/img/user.png" alt="User image">
+          <user-icon />
         </div>
       </div>
     </div>
@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import UserIcon from '@/components/UserIcon'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -24,6 +25,9 @@ export default {
     data: {
       type: Object
     }
+  },
+  components: {
+    UserIcon
   },
   computed: {
     ...mapGetters('account', ['getUser']),

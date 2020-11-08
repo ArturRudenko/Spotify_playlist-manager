@@ -8,8 +8,8 @@ export default {
   actions: {
     async loginByCode(store, code) {
       const spotifyResponseData = await Vue.prototype.$spotify.token(code)
-      Vue.prototype.$cookies.set('access-token', `${spotifyResponseData.data.access_token}`, '60m')
-      Vue.prototype.$cookies.set('refresh-token', `${spotifyResponseData.data.refresh_token}`, '60m')
+      Vue.prototype.$cookies.set('access-token', `${spotifyResponseData.data.access_token}`, `${spotifyResponseData.data.expires_in}s`)
+      Vue.prototype.$cookies.set('refresh-token', `${spotifyResponseData.data.refresh_token}`, `${spotifyResponseData.data.expires_in}s`)
       if (spotifyResponseData) {
         return true
       } else throw new Error('No request from server')
@@ -20,16 +20,12 @@ export default {
       store.state.user = accountData
       return accountData
     },
-    async getPlaylists(store) {
-      return await Vue.prototype.$spotify.playlists(store.state.user.id)
+    async getPlaylists(store, obj) {
+      return await Vue.prototype.$spotify.playlists(store.state.user.id, obj)
     },
-    async getPlaylist(store, playlistId) {
-      console.log(playlistId)
-      return await Vue.prototype.$spotify.playlist(playlistId)
+    async createPlaylist(store, playlistName, playlistIsPublic) {
+      return await Vue.prototype.$spotify.createPlaylist(store.state.user.id, playlistName, playlistIsPublic)
     },
-    async getTracks(store, playlistId) {
-      return await Vue.prototype.$spotify.tracks(playlistId)
-    }
   },
   getters: {
     getUser(state) {
