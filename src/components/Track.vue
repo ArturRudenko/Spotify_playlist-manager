@@ -2,11 +2,11 @@
   <div class="track-list__item track">
     <div class="track__left">
       <p><span class="track__index">{{ num + 1 }}</span>
-      <span><span class="track__name">{{ track.track.name }}</span><br>
-        <span class="tack__author">{{ track.track.artists[0].name }}</span></span></p>
+      <span><span class="track__name">{{ track.name }}</span><br>
+        <span class="tack__author">{{ track.artists[0].name }} - {{ track.album.name }}</span></span></p>
     </div>
     <div class="track__line"></div>
-    <div class="track__right"><span>{{ (track.track.duration_ms/60000).toFixed(2).split('.').join(':') }}</span></div>
+    <div class="track__right"><span>{{ (track.duration_ms/60000).toFixed(2).split('.').join(':') }}</span></div>
   </div>
 </template>
 
@@ -45,7 +45,8 @@ export default {
     font-size: .9em;
   }
   &__name{
-    font-size: 1.2em;
+    font-size: 1.25em;
+    letter-spacing: .5px;
   }
   &__author{
     font-size: 0.95em;

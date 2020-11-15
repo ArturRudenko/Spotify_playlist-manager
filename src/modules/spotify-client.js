@@ -74,8 +74,8 @@ export default class SpotifyClient {
     return this.httpClient.post(`/v1/users/${userId}/playlists`, body)
   }
 
-  async search(query) {
-    return this.httpClient.get(`/v1/search?q=${encodeURIComponent(query)}&type=album,artist,playlist,track,show,episode`)
+  async search({query, limit, offset}) {
+    return this.httpClient.get(`/v1/search?q=${encodeURIComponent(query)}&type=album,artist,playlist,track,show,episode&limit=${limit}&offset=${offset}`)
   }
 
   async token({ code }) {

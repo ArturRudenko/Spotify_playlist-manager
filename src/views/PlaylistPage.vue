@@ -14,10 +14,10 @@
           <h1 class="playlist-meta__title">{{ playlistData.name }}</h1>
         </div>
       </div>
-      <div class="playlist-page__track-list track-list__items">
+      <div class="playlist-page__track-list">
         <Track v-for="(track, index) in tracks"
                :key="track.track.id"
-               :track="track"
+               :track="track.track"
                :num="index"/>
       </div>
     </div>

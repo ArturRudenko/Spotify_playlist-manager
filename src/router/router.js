@@ -52,8 +52,8 @@ const router = new Router({
             {
               path: 'playlists/:playlist_id',
               name: 'playlist.page',
-              component: PlaylistPage,
-              props: true
+              props: true,
+              component: PlaylistPage
             },
             {
               path: 'search',

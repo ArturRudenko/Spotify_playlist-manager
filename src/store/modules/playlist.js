@@ -9,8 +9,8 @@ export default {
     async getTracks(store, playlistId) {
       return await Vue.prototype.$spotify.tracks(playlistId)
     },
-    async search(store, query) {
-      return await Vue.prototype.$spotify.search(query)
+    async search(store, queryObj) {
+      return await Vue.prototype.$spotify.search(queryObj)
     },
   }
 }

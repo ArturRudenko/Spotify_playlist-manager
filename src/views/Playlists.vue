@@ -50,7 +50,7 @@ export default {
       modalIsOpen: false,
       playlists: [],
       activePageTab: 1,
-      playlistsLimit: 2,
+      playlistsLimit: 20,
       playlistsOffset: 0,
       totalPlaylistsQuantity: 0
     }
