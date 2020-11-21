@@ -17,42 +17,32 @@
           :num="index"
         />
       </div>
-      <div class="search__pagination">
-        <ui-tab-bar 
-          v-model="activePageTab"
-          @input="searchTracks"
-        >
-          <ui-tab 
-            v-for="(pageTab,index) in pagination"
-            :key="index"
-            :value="index + 1"
-            >
-              {{ index + 1 }}
-          </ui-tab>
-        </ui-tab-bar>
-      </div>
     </div>
+    <pagination
+        v-show="totalTracksQuantity"
+        @change="searchTracks"
+        :items-quantity="totalTracksQuantity"
+        :limit="queryLimit"
+        :max-pages="maxPages"
+    />
   </div>
 </template>
 
 <script>
 import Track from '@/components/Track'
-import UiTab from '@/components/UiTab'
-import UiTabBar from '@/components/UiTabBar'
+import Pagination from '@/components/Pagination'
 import { mapActions } from 'vuex';
 
 export default {
   name: 'Search',
   components: {
-    Track,
-    UiTab,
-    UiTabBar
+    Pagination,
+    Track
   },
   data: function () {
     return {
       query: '',
       tracks: [],
-      activePageTab: 1,
       maxPages: 5,
       queryLimit: 20,
       queryOffset: 0,
@@ -61,12 +51,10 @@ export default {
   },
   methods: {
     ...mapActions('playlist', ['search']),
-    async searchTracks (value = 1) {
-      let currentOffset = this.queryLimit * (value - 1)
-
-      currentOffset > 0
-        ? this.queryOffset = currentOffset
-        : this.queryOffset = 0
+    async searchTracks (value) {
+      value && value > 0
+        ? this.queryOffset = this.queryLimit * (value - 1)
+        : this.queryOffset
 
       const queryObj = {
         query: this.query,
@@ -80,13 +68,11 @@ export default {
             this.tracks = res.data.tracks
             this.totalTracksQuantity = res.data.tracks.total
           })
+    },
+    logFunc (value) {
+      console.log(value)
     }
-  },
-  computed: {
-    pagination() {
-      return Math.ceil(this.totalTracksQuantity / this.queryLimit )
-    }
-  },
+  }
 }
 </script>
 
