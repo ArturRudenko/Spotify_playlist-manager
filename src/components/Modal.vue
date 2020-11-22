@@ -68,7 +68,7 @@ export default {
     max-height: 600px;
     padding: 20px;
     border-radius: 8px;
-    background-color: rgba(0,0,0,.65);
+    background-color: rgba(0,0,0,.8);
 
     &::-webkit-scrollbar-track {
       -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);

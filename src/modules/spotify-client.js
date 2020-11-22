@@ -53,8 +53,10 @@ export default class SpotifyClient {
     return this.httpClient.get('/v1/me')
   }
 
-  async playlists(userId, { limit, offset }) {
-    return this.httpClient.get(`/v1/users/${userId}/playlists?limit=${limit}&offset=${offset}`)
+  async playlists(userId, queryObj) {
+    if (queryObj) {
+      return this.httpClient.get(`/v1/users/${userId}/playlists?limit=${queryObj.limit}&offset=${queryObj.offset}`)
+    } else return this.httpClient.get(`/v1/users/${userId}/playlists`)
   }
 
   async playlist(playlistId) {
@@ -72,6 +74,25 @@ export default class SpotifyClient {
     }
 
     return this.httpClient.post(`/v1/users/${userId}/playlists`, body)
+  }
+
+  addTrackToPlaylist(userId, { playlistId, trackId }) {
+    const body = {
+      'uris': [`spotify:track:${trackId}`]
+    }
+
+    return this.httpClient.post(`/v1/users/${userId}/playlists/${playlistId}/tracks`, body)
+  }
+
+  removeTrackFromPlaylist(userId, { playlistId, trackId }) {
+    console.log(playlistId, trackId);
+    const body = {
+      'tracks': [
+        {'uri': `spotify:track:${trackId}`}
+      ]
+    }
+
+    return this.httpClient.delete(`/v1/users/${userId}/playlists/${playlistId}/tracks`, body)
   }
 
   async search({query, limit, offset}) {

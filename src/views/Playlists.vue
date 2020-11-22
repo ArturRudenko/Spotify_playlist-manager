@@ -5,25 +5,30 @@
     </modal>
     <div class="playlists__content">
       <h1 class="playlists__title">Your playlists</h1>
-      <button @click="changeModalStatus" class="playlists__btn-create">Create new playlist</button>
+      <button 
+        @click="changeModalStatus"
+        class="playlists__btn-create"
+      >Create new playlist</button>
       <br>
-      <button @click="$router.push({ name: 'search' })" class="playlists__btn-search">Search</button>
+      <button 
+        @click="$router.push({ name: 'search' })"
+        class="playlists__btn-search"
+      >Search</button>
       <div class="playlists__items">
-        <playlist-comp v-for="playlist in playlists"
-                       :key="playlist.id"
-                       :playlist="playlist"
-                       @click.native="$router.push({ name: 'playlist.page', params: { playlist_id: playlist.id } })"/>
+        <playlist-comp 
+          v-for="playlist in playlists"
+          :key="playlist.id"
+          :playlist="playlist"
+          @click.native="$router.push({ name: 'playlist.page', params: { playlist_id: playlist.id } })"
+        />
       </div>
-      <div class="playlists__pagination">
-        <ui-tab-bar v-model="activePageTab"
-                    @input="updatePlaylists">
-          <ui-tab v-for="(pageTab,index) in pagesQuantity"
-                  :key="index"
-                  :value="index + 1">
-                  {{ index + 1 }}
-          </ui-tab>
-        </ui-tab-bar>
-      </div>
+      <pagination 
+        v-show="totalPlaylistsQuantity > playlistsLimit"
+        :items-quantity="totalPlaylistsQuantity"
+        :limit="playlistsLimit"
+        :max-pages="maxPages"
+        @change="updatePlaylists"
+      />
     </div>
   </div>
 </template>
@@ -32,9 +37,8 @@
 import PlaylistComp from '@/components/PlaylistComp'
 import NewPlaylistForm from '@/components/NewPlaylistForm'
 import Modal from '@/components/Modal'
-import UiTab from '@/components/UiTab'
-import UiTabBar from '@/components/UiTabBar'
-import {mapActions} from 'vuex'
+import Pagination from '@/components/Pagination.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Playlists',
@@ -42,37 +46,43 @@ export default {
     PlaylistComp,
     Modal,
     NewPlaylistForm,
-    UiTab,
-    UiTabBar
+    Pagination
   },
   data: function () {
     return {
       modalIsOpen: false,
       playlists: [],
-      activePageTab: 1,
+      maxPages: 5,
       playlistsLimit: 20,
       playlistsOffset: 0,
       totalPlaylistsQuantity: 0
     }
   },
   methods: {
-    ...mapActions('account', ['getAccountData', 'getPlaylists', 'createPlaylist']),
+    ...mapActions([
+      'account/getAccountData',
+      'playlist/getPlaylists',
+      'playlist/createPlaylist'
+    ]),
     changeModalStatus() {
       this.modalIsOpen = !this.modalIsOpen
     },
     async createNewPlaylist(newPlaylistData) {
       this.changeModalStatus()
-      await this.createPlaylist(newPlaylistData.title, newPlaylistData.isPrivate)
+      await this['playlist/createPlaylist'](newPlaylistData.title, newPlaylistData.isPrivate)
           .then(res => console.log(res))
     },
     async updatePlaylists(value) {
-      let currentOffset = this.playlistsLimit * (value - 1)
+      value && value > 0
+        ? this.playlistsOffset = this.playlistsLimit * (value - 1)
+        : this.playlistsOffset
 
-      currentOffset > 0
-        ? this.playlistsOffset = currentOffset
-        : this.playlistsOffset = 0
+      const queryObj = {
+        limit: this.playlistsLimit,
+        offset: this.playlistsOffset
+      }
 
-      await this.getPlaylists({limit: this.playlistsLimit, offset: this.playlistsOffset})
+      await this['playlist/getPlaylists'](queryObj)
         .then(response => {
           console.log(response)
           this.playlists = response.data.items
@@ -85,9 +95,9 @@ export default {
     }
   },
   async created() {
-    await this.getAccountData()
-        .then(response => console.log(response))
-    await this.getPlaylists({limit: this.playlistsLimit, offset: this.playlistsOffset})
+    await this['account/getAccountData']()
+
+    await this['playlist/getPlaylists']({limit: this.playlistsLimit, offset: this.playlistsOffset})
         .then(response => {
           console.log(response)
           this.playlists = response.data.items

@@ -1,4 +1,11 @@
-# spotify-client
+# spotify-client | playlist-manager
+
+## first of all
+```
+to run the app you should sign up your own app on https://developer.spotify.com
+
+and create .env.development.local file with your own spotify client id and spotify secret code
+```
 
 ## Project setup
 ```
@@ -19,6 +26,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

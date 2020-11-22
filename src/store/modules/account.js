@@ -19,13 +19,7 @@ export default {
       const accountData = accountDataResponse.data
       store.state.user = accountData
       return accountData
-    },
-    async getPlaylists(store, queryObj) {
-      return await Vue.prototype.$spotify.playlists(store.state.user.id, queryObj)
-    },
-    async createPlaylist(store, playlistName, playlistIsPublic) {
-      return await Vue.prototype.$spotify.createPlaylist(store.state.user.id, playlistName, playlistIsPublic)
-    },
+    }
   },
   getters: {
     getUser(state) {

@@ -3,8 +3,14 @@
     <div class="playlist-page__content">
       <div class="playlist-page__meta playlist-meta">
         <div class="playlist-meta__left">
-          <div v-if="playlistData.images && playlistData.images[0]" class="playlist-meta__img">
-            <img :src="playlistData.images[0].url" alt="Playlist photo">
+          <div 
+            class="playlist-meta__img"
+            v-if="playlistData.images && playlistData.images[0]"
+          >
+            <img 
+              :src="playlistData.images[0].url"
+              alt="Playlist photo"
+            >
           </div>
           <div v-else class="playlist-meta__img--placeholder">
             <folder-icon />
@@ -15,10 +21,20 @@
         </div>
       </div>
       <div class="playlist-page__track-list">
-        <Track v-for="(track, index) in tracks"
-               :key="track.track.id"
-               :track="track.track"
-               :num="index"/>
+        <Track
+          v-for="(track, index) in tracks"
+          :key="track.id"
+          :track-id="track.id"
+          :track-name="track.name"
+          :artist-name="track.artists[0].name"
+          :album-name="track.album.name"
+          :track-duration="track.duration_ms"
+          :num="index + 1"
+          :index="index"
+          changeable
+          removable
+          @remove="onRemove"
+        />
       </div>
     </div>
   </div>
@@ -34,27 +50,30 @@ export default {
   data: function () {
     return {
       playlistData: {},
-      tracks: [],
       playlistId: this.$route.params.playlist_id,
+      tracks: []
     }
   },
   components: {
     Track,
-    FolderIcon,
+    FolderIcon
+  },
+  
+  methods: {
+    ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack']),
+    async onRemove (id) {
+      await this.removeTrack({
+        playlistId: this.playlistId,
+        trackId: id
+      })
+    }
   },
   async created() {
-    this.getPlaylist(this.playlistId)
-      .then(response => {
-        this.playlistData = response.data;
-      })
+    await this.getPlaylist(this.playlistId)
+      .then(response => this.playlistData = response.data)
 
-    this.getTracks(this.playlistId)
-      .then(response => {
-        this.tracks = response.data.items
-      })
-  },
-  methods: {
-    ...mapActions('playlist', ['getPlaylist', 'getTracks'])
+    await this.getTracks(this.playlistId)
+      .then(response => response.data.items.forEach(item => this.tracks.push(item.track)))
   }
 }
 </script>
@@ -84,6 +103,8 @@ export default {
     }
     &__img img{
       width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     &__img--placeholder{
       display: flex;
