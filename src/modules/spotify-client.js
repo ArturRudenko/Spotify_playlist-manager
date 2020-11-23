@@ -85,14 +85,13 @@ export default class SpotifyClient {
   }
 
   removeTrackFromPlaylist(userId, { playlistId, trackId }) {
-    console.log(playlistId, trackId);
     const body = {
       'tracks': [
         {'uri': `spotify:track:${trackId}`}
       ]
     }
 
-    return this.httpClient.delete(`/v1/users/${userId}/playlists/${playlistId}/tracks`, body)
+    return this.httpClient.delete(`/v1/users/${userId}/playlists/${playlistId}/tracks`, { data: body })
   }
 
   async search({query, limit, offset}) {

@@ -170,7 +170,7 @@ export default {
           background: rgba(0, 0, 0, 1);
           transition: background .3s;
           &:hover {
-            background: rgba(0, 0, 0, .7);
+            background: rgba(0, 0, 0, .5);
           }
         }
         &:before {

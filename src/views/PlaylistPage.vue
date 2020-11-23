@@ -66,6 +66,8 @@ export default {
         playlistId: this.playlistId,
         trackId: id
       })
+
+      this.tracks = this.tracks.filter(track => track.id !== id)
     }
   },
   async created() {

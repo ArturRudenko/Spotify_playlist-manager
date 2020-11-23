@@ -31,14 +31,13 @@
         v-else
       >
         <Track 
-          v-for="(track, index) in tracks.items"
+          v-for="(track) in tracks.items"
           :key="track.id"
           :track-id="track.id"
           :track-name="track.name"
           :artist-name="track.artists[0].name"
           :album-name="track.album.name"
           :track-duration="track.duration_ms"
-          :num="index + 1"
           changeable
           addable
           @add="onAdd"
