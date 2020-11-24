@@ -47,14 +47,14 @@ export default {
   padding: 15px 15px 25px 15px;
   margin-right: 31px;
   margin-bottom: 30px;
-  background: rgba(18, 30, 61,.5);
-  transition: background .3s;
+  background: lighten(#171717, 2%);
+  transition: background .4s;
   cursor: pointer;
   &:nth-child(4n){
     margin-right: 0;
   }
   &:hover{
-    background: lighten(rgba(18, 30, 61,1), 5%);
+    background: lighten(#171717, 12%);
   }
   &__img{
     width: 240px;

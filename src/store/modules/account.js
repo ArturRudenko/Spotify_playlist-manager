@@ -3,7 +3,7 @@ import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
-    user: null,
+    userData: null,
   },
   actions: {
     async loginByCode(store, code) {
@@ -17,13 +17,13 @@ export default {
     async getAccountData(store) {
       const accountDataResponse = await Vue.prototype.$spotify.me().catch(error => console.log(error.response))
       const accountData = accountDataResponse.data
-      store.state.user = accountData
+      store.state.userData = accountData
       return accountData
     }
   },
   getters: {
-    getUser(state) {
-      return  state.user
+    user(state) {
+      return  state.userData
     },
     accessToken() {
       return Vue.prototype.$cookies.get('access-token')

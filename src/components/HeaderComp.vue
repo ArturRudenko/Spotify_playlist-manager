@@ -4,7 +4,7 @@
       <div class="header__img"><img src="../assets/img/spotify.png" alt="Spotify logo"></div>
       <div class="header__info user-info">
         <div class="user-info__name">
-          <p v-if="getUser">{{ getUser.display_name }}</p>
+          <p v-if="user">{{ user.display_name }}</p>
           <p v-else>Name</p>
         </div>
         <div class="user-info__img">
@@ -30,7 +30,7 @@ export default {
     UserIcon
   },
   computed: {
-    ...mapGetters('account', ['getUser']),
+    ...mapGetters('account', ['user']),
   }
 }
 </script>

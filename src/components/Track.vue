@@ -102,7 +102,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0, 0, 0, .3);
+  background: rgba(40 ,40 ,40, .7);
   padding: 15px;
   margin-bottom: 15px;
   span{
@@ -131,7 +131,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 10px;
+    width: 30px;
     height: 30px;
     margin-left: 10px;
     cursor: pointer;
@@ -161,7 +161,7 @@ export default {
     &__list {
         position: absolute;
         top: 115%;
-        right: -4px;
+        right: 6px;
         &-item {
           font-size: .9em;
           letter-spacing: .5px;
