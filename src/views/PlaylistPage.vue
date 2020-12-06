@@ -34,6 +34,7 @@
           changeable
           removable
           @remove="onRemove"
+          @play="play"
         />
       </div>
     </div>
@@ -60,7 +61,7 @@ export default {
   },
   
   methods: {
-    ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack']),
+    ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack', 'startPlayback']),
     async onRemove (id) {
       await this.removeTrack({
         playlistId: this.playlistId,
@@ -68,6 +69,12 @@ export default {
       })
 
       this.tracks = this.tracks.filter(track => track.id !== id)
+    },
+    play (trackId) {
+      this.startPlayback({
+        albumId: this.playlistId,
+        trackId
+      })
     }
   },
   async created() {

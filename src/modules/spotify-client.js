@@ -53,6 +53,26 @@ export default class SpotifyClient {
     return this.httpClient.get('/v1/me')
   }
 
+  async token({ code }) {
+    const form = new URLSearchParams();
+    form.append('grant_type', 'authorization_code')
+    form.append('code', code)
+    form.append('redirect_uri', this.configs.redirectRoute)
+
+    const headers = {
+        'Authorization': 'Basic ' + this.basicAuthProperty(),
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    return this.httpClient.post(this.configs.accountsUrl+'/api/token', form, {
+      headers: headers,
+    })
+  }
+
+  async devices() {
+    return this.httpClient.get(`/v1/me/player/devices`)
+  }
+
   async playlists(userId, queryObj) {
     if (queryObj) {
       return this.httpClient.get(`/v1/users/${userId}/playlists?limit=${queryObj.limit}&offset=${queryObj.offset}`)
@@ -63,10 +83,6 @@ export default class SpotifyClient {
     return this.httpClient.get(`/v1/playlists/${playlistId}`)
   }
 
-  async tracks(playlistId) {
-    return this.httpClient.get(`/v1/playlists/${playlistId}/tracks`)
-  }
-
   async createPlaylist(userId, playlistName, playlistIsPublic) {
     const body = {
       'name': `${playlistName}`,
@@ -74,6 +90,10 @@ export default class SpotifyClient {
     }
 
     return this.httpClient.post(`/v1/users/${userId}/playlists`, body)
+  }
+
+  async tracks(playlistId) {
+    return this.httpClient.get(`/v1/playlists/${playlistId}/tracks`)
   }
 
   addTrackToPlaylist(userId, { playlistId, trackId }) {
@@ -98,19 +118,10 @@ export default class SpotifyClient {
     return this.httpClient.get(`/v1/search?q=${encodeURIComponent(query)}&type=album,artist,playlist,track,show,episode&limit=${limit}&offset=${offset}`)
   }
 
-  async token({ code }) {
-    const form = new URLSearchParams();
-    form.append('grant_type', 'authorization_code')
-    form.append('code', code)
-    form.append('redirect_uri', this.configs.redirectRoute)
+  async startPlayback({ albumId, trackId}) {
+    const devices = await this.devices()
 
-    const headers = {
-        'Authorization': 'Basic ' + this.basicAuthProperty(),
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-
-    return this.httpClient.post(this.configs.accountsUrl+'/api/token', form, {
-      headers: headers,
-    })
+    console.log('data: ',albumId, trackId);
+    console.log('devices: ',devices);
   }
 }

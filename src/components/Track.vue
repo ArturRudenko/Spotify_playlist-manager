@@ -5,7 +5,9 @@
         <span><span class="track__name">{{ trackName }}</span><br>
           <span class="tack__author">{{ artistName }} - {{ albumName }}</span></span></p>
     </div>
-    <div class="track__line" />
+    <div class="track__controls">
+      <span @click="$emit('play', trackId)">Play</span>
+    </div>
     <div class="track__right">
       <span>{{ duration }}</span>
       <div
