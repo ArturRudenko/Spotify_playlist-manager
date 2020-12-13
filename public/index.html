@@ -13,5 +13,29 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+      function getCookie (name) {
+        let matches = document.cookie.match(new RegExp(
+          "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+      }
+
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        const token = getCookie('access-token');
+        const player = new Spotify.Player({
+          name: 'Web Playback SDK Quick Start Player',
+          getOAuthToken: cb => { cb(token); }
+        });
+
+        const device_id = getCookie('active-device')
+        if(device_id) {
+          player.connect();
+        } else {
+          throw new Error('Web player is not available')
+        }
+      }
+    </script>
   </body>
 </html>

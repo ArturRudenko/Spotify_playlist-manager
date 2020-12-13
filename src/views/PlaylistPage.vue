@@ -61,7 +61,8 @@ export default {
   },
   
   methods: {
-    ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack', 'startPlayback']),
+    ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack']),
+    ...mapActions('playback', ['startPlayback', 'getPlayback']),
     async onRemove (id) {
       await this.removeTrack({
         playlistId: this.playlistId,
@@ -70,11 +71,13 @@ export default {
 
       this.tracks = this.tracks.filter(track => track.id !== id)
     },
-    play (trackId) {
-      this.startPlayback({
-        albumId: this.playlistId,
+    async play (trackId) {
+      await this.startPlayback({
+        deviceId: this.$cookies.get('active-device'),
+        playlistId: this.playlistId,
         trackId
       })
+      console.log( await this.getPlayback())
     }
   },
   async created() {

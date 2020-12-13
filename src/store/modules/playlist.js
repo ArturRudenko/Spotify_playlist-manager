@@ -23,9 +23,6 @@ export default {
     },
     async search (store, queryObj) {
       return await Vue.prototype.$spotify.search(queryObj)
-    },
-    async startPlayback (store, queryObj) {
-      return await Vue.prototype.$spotify.startPlayback(queryObj)
     }
   }
 }

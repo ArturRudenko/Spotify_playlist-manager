@@ -118,10 +118,17 @@ export default class SpotifyClient {
     return this.httpClient.get(`/v1/search?q=${encodeURIComponent(query)}&type=album,artist,playlist,track,show,episode&limit=${limit}&offset=${offset}`)
   }
 
-  async startPlayback({ albumId, trackId}) {
-    const devices = await this.devices()
+  async startPlayback({ deviceId, playlistId, trackId}) {
+    const body = {
+      'context_uri': `spotify:playlist:${playlistId}`,
+      'offset': {'uri': `spotify:track:${trackId}`},
+      'position_ms': 0
+    }
 
-    console.log('data: ',albumId, trackId);
-    console.log('devices: ',devices);
+    return this.httpClient.put(`/v1/me/player/play?device_id=${deviceId}`, body)
+  }
+
+  async getCurrentPlayback() {
+    return this.httpClient.get(`/v1/me/player/currently-playing`)
   }
 }

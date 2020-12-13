@@ -3,7 +3,7 @@ import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
-    userData: null,
+    userData: null
   },
   actions: {
     async loginByCode(store, code) {
@@ -16,9 +16,13 @@ export default {
     },
     async getAccountData(store) {
       const accountDataResponse = await Vue.prototype.$spotify.me().catch(error => console.log(error.response))
-      const accountData = accountDataResponse.data
-      store.state.userData = accountData
-      return accountData
+      store.state.userData = accountDataResponse.data
+
+      const devices = await Vue.prototype.$spotify.devices()
+      const activeDevice = devices.data.devices.find(device => device.name.startsWith('Web'))
+      if (activeDevice) Vue.prototype.$cookies.set('active-device', activeDevice.id)
+
+      return store.state.userData
     }
   },
   getters: {
