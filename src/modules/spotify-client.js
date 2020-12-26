@@ -128,6 +128,10 @@ export default class SpotifyClient {
     return this.httpClient.put(`/v1/me/player/play?device_id=${deviceId}`, body)
   }
 
+  async pausePlayback() {
+    return this.httpClient.put(`/v1/me/player/pause`)
+  }
+
   async getCurrentPlayback() {
     return this.httpClient.get(`/v1/me/player/currently-playing`)
   }

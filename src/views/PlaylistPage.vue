@@ -25,6 +25,7 @@
           v-for="(track, index) in tracks"
           :key="track.id"
           :track-id="track.id"
+          :current-track-id="currentTrack ? currentTrack.id: ''"
           :track-name="track.name"
           :artist-name="track.artists[0].name"
           :album-name="track.album.name"
@@ -35,6 +36,7 @@
           removable
           @remove="onRemove"
           @play="play"
+          @pause="pause"
         />
       </div>
     </div>
@@ -42,9 +44,9 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
 import FolderIcon from '@/components/FolderIcon'
 import Track from '@/components/Track'
-import { mapActions } from 'vuex'
 
 export default {
   name: 'PlaylistPage',
@@ -59,10 +61,12 @@ export default {
     Track,
     FolderIcon
   },
-  
+  computed: {
+    ...mapState({ currentTrack: state => state.playback.currentTrack })
+  },
   methods: {
     ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack']),
-    ...mapActions('playback', ['startPlayback', 'getPlayback']),
+    ...mapActions('playback', ['startPlayback', 'pausePlayback', 'getPlayback']),
     async onRemove (id) {
       await this.removeTrack({
         playlistId: this.playlistId,
@@ -77,7 +81,11 @@ export default {
         playlistId: this.playlistId,
         trackId
       })
-      console.log( await this.getPlayback())
+      await this.getPlayback()
+    },
+    async pause () {
+      await this.pausePlayback()
+      await this.getPlayback()
     }
   },
   async created() {

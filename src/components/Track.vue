@@ -6,7 +6,14 @@
           <span class="tack__author">{{ artistName }} - {{ albumName }}</span></span></p>
     </div>
     <div class="track__controls">
-      <span @click="$emit('play', trackId)">Play</span>
+      <pause-icon
+        v-if="currentTrackId && currentTrackId === trackId"
+        @click.native="$emit('pause', trackId)"
+      />
+      <play-icon
+        v-else
+        @click.native="$emit('play', trackId)"
+      />
     </div>
     <div class="track__right">
       <span>{{ duration }}</span>
@@ -15,7 +22,7 @@
         v-if="changeable"
         @click="showOptions = !showOptions"
       >
-        <button class="track-options__btn" />
+        <options-icon />
         <transition name="fade">
           <ul
             class="track-options__list"
@@ -39,39 +46,49 @@
 </template>
 
 <script>
+import OptionsIcon from '@/components/icons/OptionsIcon'
+import PlayIcon from '@/components/icons/PlayIcon'
+import PauseIcon from '@/components/icons/PauseIcon'
+
 export default {
   name: 'Track',
+  components: {
+    OptionsIcon,
+    PlayIcon,
+    PauseIcon
+  },
   props: {
     trackId: {
       type: String,
       required: true
     },
+    currentTrackId: {
+      type: String,
+      default : ''
+    },
     trackName: {
       type: String,
-      default () {
-        return ''
-      }
+      default: ''
     },
     artistName: {
       type: String,
-      default () {
-        return ''
-      }
+      default: ''
     },
     albumName: {
       type: String,
-      default () {
-        return ''
-      }
+      default: ''
     },
     trackDuration: {
-      type: Number
+      type: Number,
+      default: 0
     },
     num: {
-        type: Number
+      type: Number,
+      default: 0
     },
     index: {
-      type: Number
+      type: Number,
+      default: 0
     },
     changeable: {
       type: Boolean,
@@ -127,6 +144,11 @@ export default {
   &__author{
     font-size: 0.95em;
   }
+  &__controls {
+    min-width: 23px;
+    margin-left: auto;
+    margin-right: 60px;
+  }
   &-options {
     position: relative;
     display: flex;
@@ -137,33 +159,21 @@ export default {
     height: 30px;
     margin-left: 10px;
     cursor: pointer;
-    &__btn {
-      position: relative;
-      background: #fff;
-      width: 3px;
-      height: 3px;
-      border: none;
-      outline: none;
-      &:before,
-      &:after {
-        position: absolute;
-        content: '';
-        background: #fff;
-        width: 3px;
-        height: 3px;
-        left: 0;
-      }
-      &:before {
-        top: -9px;
-      }
-      &:after {
-        bottom: -9px;
-      }
-    }
     &__list {
         position: absolute;
         top: 115%;
         right: 6px;
+        &:before {
+          position: absolute;
+          content: '';
+          width: 0;
+          height: 0;
+          top: -7px;
+          right: 0;
+          border: 7px solid transparent;
+          border-top-width: 0;
+          border-bottom-color: #000;
+        }
         &-item {
           font-size: .9em;
           letter-spacing: .5px;
@@ -174,16 +184,6 @@ export default {
           &:hover {
             background: rgba(0, 0, 0, .5);
           }
-        }
-        &:before {
-          position: absolute;
-          content: '';
-          width: 11px;
-          height: 11px;
-          top: -6px;
-          right: 3px;
-          background: #000;
-          transform: rotate(45deg);
         }
       }
   }
