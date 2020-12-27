@@ -1,7 +1,11 @@
 <template>
   <div class="header">
     <div class="header__wrapper">
-      <div class="header__img"><img src="../assets/img/spotify.png" alt="Spotify logo"></div>
+      <div class="header__img">
+        <router-link :to="{ name: 'playlists' }">
+        <img src="../assets/img/spotify.png" alt="Spotify logo">
+        </router-link>
+      </div>
       <div class="header__info user-info">
         <div class="user-info__name">
           <p v-if="user">{{ user.display_name }}</p>
@@ -16,8 +20,8 @@
 </template>
 
 <script>
-import UserIcon from '@/components/UserIcon'
 import { mapGetters } from 'vuex'
+import UserIcon from '@/components/UserIcon'
 
 export default {
   name: 'HeaderComp',

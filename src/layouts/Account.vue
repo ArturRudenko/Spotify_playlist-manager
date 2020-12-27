@@ -1,18 +1,27 @@
 <template>
-  <div class="user-account">
+  <div class="account">
     <header-comp />
     <router-view />
+    <playback-panel
+      v-if="currentTrack"
+      :current-track="currentTrack"
+    />
   </div>
 </template>
 
 <script>
-import HeaderComp from "@/components/HeaderComp";
-import {mapActions} from "vuex";
+import { mapActions, mapState } from 'vuex'
+import HeaderComp from '@/components/HeaderComp'
+import PlaybackPanel from '@/components/PlaybackPanel'
 
 export default {
   name: 'Account',
   components: {
-    HeaderComp
+    HeaderComp,
+    PlaybackPanel
+  },
+  computed: {
+    ...mapState({ currentTrack: state => state.playback.currentTrack })
   },
   methods: {
     ...mapActions('account', ['getAccountData']),
@@ -23,3 +32,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.account {
+  position: relative;
+  padding-bottom: 70px;
+}
+</style>

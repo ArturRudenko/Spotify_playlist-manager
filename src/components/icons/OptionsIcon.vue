@@ -55,9 +55,16 @@ export default {
 svg {
   cursor: pointer;
   max-width: 23px;
+  &:hover {
+    path,
+    circle {
+      fill: rgba(248, 248, 248, .5);
+    }
+  }
   path,
   circle {
-    fill: #f8f8f8;
+    fill: rgba(248, 248, 248, 1);
+    transition: all .35s;
   }
 }
 </style>

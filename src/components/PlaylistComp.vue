@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import FolderIcon from '@/components/FolderIcon'
+import FolderIcon from '@/components/icons/FolderIcon'
 
 export default {
   name: 'PlaylistComp',

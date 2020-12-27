@@ -14,7 +14,7 @@ export default {
     },
     async getPlayback (store) {
         const currentPlayback = await Vue.prototype.$spotify.getCurrentPlayback()
-        store.state.currentTrack = currentPlayback.data.item
+        store.state.currentTrack = currentPlayback.data
 
         return currentPlayback
     }

@@ -25,7 +25,8 @@
           v-for="(track, index) in tracks"
           :key="track.id"
           :track-id="track.id"
-          :current-track-id="currentTrack ? currentTrack.id: ''"
+          :current-track-id="currentTrack ? currentTrack.item.id : ''"
+          :is-playing="currentTrack ? currentTrack.is_playing : false"
           :track-name="track.name"
           :artist-name="track.artists[0].name"
           :album-name="track.album.name"
@@ -45,7 +46,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
-import FolderIcon from '@/components/FolderIcon'
+import FolderIcon from '@/components/icons/FolderIcon'
 import Track from '@/components/Track'
 
 export default {

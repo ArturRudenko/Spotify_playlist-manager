@@ -7,7 +7,7 @@
     </div>
     <div class="track__controls">
       <pause-icon
-        v-if="currentTrackId && currentTrackId === trackId"
+        v-if="isPlaying && currentTrackId && currentTrackId === trackId"
         @click.native="$emit('pause', trackId)"
       />
       <play-icon
@@ -89,6 +89,10 @@ export default {
     index: {
       type: Number,
       default: 0
+    },
+    isPlaying: {
+      type: Boolean,
+      default: false
     },
     changeable: {
       type: Boolean,

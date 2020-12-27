@@ -109,7 +109,6 @@ export default {
 
 <style lang="scss">
 .playlists {
-  padding-bottom: 40px;
   &__content {
     max-width: 1170px;
     margin: 0 auto;
