@@ -15,6 +15,10 @@
     </div>
     <div class="playback-panel__controls">
       <div class="playback-panel__buttons">
+        <next-icon
+            @click.native="prev"
+            class="playback-panel__button playback-panel__button--prev"
+        />
         <pause-icon
           v-if="currentTrack.is_playing"
           @click.native="pause"
@@ -25,6 +29,22 @@
           @click.native="play"
           class="playback-panel__button"
         />
+        <next-icon
+          @click.native="next"
+          class="playback-panel__button playback-panel__button--next"
+        />
+        <div class="playback-panel__button playback-panel__button--repeat repeat-btn">
+          <repeat-icon @click.native="repeat" />
+          <span
+            v-show="repeatState !== 'off'"
+            class="repeat-btn__indicator"
+          >
+            <span
+              v-show="repeatState === 'track'"
+              class="repeat-btn__num"
+            >1</span>
+          </span>
+        </div>
       </div>
       <div class="playback-panel__timeline" />
     </div>
@@ -36,35 +56,56 @@
 import { mapActions } from 'vuex'
 import PlayIcon from '@/components/icons/PlayIcon'
 import PauseIcon from '@/components/icons/PauseIcon'
+import NextIcon from '@/components/icons/NextIcon'
+import RepeatIcon from '@/components/icons/RepeatIcon'
 
 export default {
   name: 'PlaybackPanel',
   components: {
     PlayIcon,
-    PauseIcon
+    PauseIcon,
+    NextIcon,
+    RepeatIcon
   },
   props: {
     currentTrack: {
       type: Object
-    },
-    created () {
-      console.log(this.currentTrack);
+    }
+  },
+  data () {
+    return {
+      repeatState: 'off'
     }
   },
   methods: {
-    ...mapActions('playback', ['startPlayback', 'pausePlayback', 'getPlayback']),
+    ...mapActions('playback',
+        ['startPlayback', 'pausePlayback', 'nextTrack', 'prevTrack', 'repeatTrack', 'getPlayback']
+    ),
     async play () {
       await this.startPlayback({
         deviceId: this.$cookies.get('active-device'),
         playlistId: this.currentTrack.context.uri.split(':').slice(2),
-        trackId: this.currentTrack.item.id
+        trackId: this.currentTrack.item.id,
+        position_ms: this.currentTrack.progress_ms
       })
       await this.getPlayback()
     },
     async pause () {
       await this.pausePlayback()
       await this.getPlayback()
-      .then(res => console.log(res))
+    },
+    async next () {
+      await this.nextTrack()
+      await this.getPlayback()
+    },
+    async prev () {
+      await this.prevTrack()
+      await this.getPlayback()
+    },
+    async repeat () {
+      this.repeatState = this.repeatState === 'off' ? 'context'
+          : this.repeatState === 'context' ? 'track' : 'off'
+      await this.repeatTrack(this.repeatState)
     }
   }
 }
@@ -98,11 +139,41 @@ export default {
       margin-bottom: 3px;
   }
   &__controls {
-      margin-right: auto;
-      margin-left: 33%;
+      margin-left: auto;
   }
   &__button {
       min-width: 23px;
+    &--prev {
+      transform: rotate(180deg);
+      margin-right: 20px;
+    }
+    &--next {
+      margin-left: 20px;
+    }
+    &--repeat {
+      margin-left: 20px;
+    }
+  }
+}
+.repeat-btn {
+  display: inline-block;
+  position: relative;
+  &__indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: calc(100% - 7px);
+    left: calc(100% - 7px);
+    width: 15px;
+    height: 15px;
+    padding: 5px;
+    border-radius: 50%;
+    background: #f8f8f8;
+    color: #373737;
+    font-size: 12px;
+    user-select: none;
+    pointer-events: none;
   }
 }
 </style>

@@ -118,21 +118,33 @@ export default class SpotifyClient {
     return this.httpClient.get(`/v1/search?q=${encodeURIComponent(query)}&type=album,artist,playlist,track,show,episode&limit=${limit}&offset=${offset}`)
   }
 
-  async startPlayback({ deviceId, playlistId, trackId}) {
+  async startPlayback({ deviceId, playlistId, trackId, position_ms}) {
     const body = {
       'context_uri': `spotify:playlist:${playlistId}`,
       'offset': {'uri': `spotify:track:${trackId}`},
-      'position_ms': 0
+      'position_ms': position_ms
     }
 
     return this.httpClient.put(`/v1/me/player/play?device_id=${deviceId}`, body)
   }
 
   async pausePlayback() {
-    return this.httpClient.put(`/v1/me/player/pause`)
+    return this.httpClient.put('/v1/me/player/pause')
+  }
+
+  async nextTrack() {
+    return this.httpClient.post('v1/me/player/next')
+  }
+
+  async prevTrack() {
+    return this.httpClient.post('v1/me/player/previous')
+  }
+
+  async repeatTrack(state) {
+    return this.httpClient.put(`v1/me/player/repeat?state=${state}`)
   }
 
   async getCurrentPlayback() {
-    return this.httpClient.get(`/v1/me/player/currently-playing`)
+    return this.httpClient.get('/v1/me/player/currently-playing')
   }
 }
