@@ -109,13 +109,18 @@ export default {
   },
   data () {
     return {
-      showOptions: false
+      showOptions: false,
+      duration: 0
     }
   },
-  computed: {
-    duration () {
-      return (this.trackDuration/60000).toFixed(2).split('.').join(':')
+  created () {
+    let num = (this.trackDuration/60000).toFixed(2).split('.')
+    if (num[1] > 60) {
+      num[0]++
+      num[1] = num[1] - 60
     }
+    if (num[1] < 10 && !String(num[1]).startsWith('0')) num[1] = `0${num[1]}`
+    this.duration = num.join(':')
   }
 }
 </script>
