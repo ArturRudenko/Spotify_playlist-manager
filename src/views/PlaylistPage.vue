@@ -80,11 +80,13 @@ export default {
       await this.startPlayback({
         deviceId: this.$cookies.get('active-device'),
         playlistId: this.playlistId,
-        trackId
+        trackId,
+        position_ms: this.currentTrack ? this.currentTrack.progress_ms : 0
       })
       await this.getPlayback()
     },
     async pause () {
+      console.log(this.currentTrack)
       await this.pausePlayback()
       await this.getPlayback()
     }

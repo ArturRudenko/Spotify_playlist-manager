@@ -31,16 +31,21 @@
         v-else
       >
         <Track 
-          v-for="(track) in tracks.items"
+          v-for="(track, index) in tracks.items"
           :key="track.id"
           :track-id="track.id"
+          :current-track-id="currentTrack ? currentTrack.item.id : ''"
+          :is-playing="currentTrack ? currentTrack.is_playing : false"
           :track-name="track.name"
           :artist-name="track.artists[0].name"
           :album-name="track.album.name"
           :track-duration="track.duration_ms"
+          :num="index + 1"
           changeable
           addable
           @add="onAdd"
+          @play="play"
+          @pause="pause"
         />
       </div>
     </div>
@@ -58,7 +63,7 @@
 import Track from '@/components/Track'
 import Pagination from '@/components/Pagination'
 import Modal from '@/components/Modal'
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'Search',
@@ -82,6 +87,8 @@ export default {
   },
   methods: {
     ...mapActions('playlist', ['search', 'addTrack', 'getPlaylists']),
+    ...mapActions('playback', ['startPlayback', 'pausePlayback', 'getPlayback']),
+    ...mapMutations('playback', ['SET_URIS']),
     async searchTracks (value) {
       value && value > 0
         ? this.queryOffset = this.queryLimit * (value - 1)
@@ -98,13 +105,9 @@ export default {
           this.tracks = res.data.tracks
           this.totalTracksQuantity = res.data.tracks.total
         })
-    },
-    async onAdd (id) {
-      this.showModal = true
-      this.trackToAdd = id
-
-      await this.getPlaylists()
-        .then(res => this.playlists = res.data.items)
+        .then(() => {
+          this.SET_URIS(this.tracks.items.map(item => item.uri))
+        })
     },
     async confirmPlaylist (id) {
       await this.addTrack({
@@ -116,9 +119,32 @@ export default {
       this.showModal = false
       this.trackToAdd = null
     },
-    logFunc (value) {
-      console.log(value)
+    async onAdd (id) {
+      this.showModal = true
+      this.trackToAdd = id
+
+      await this.getPlaylists()
+          .then(res => this.playlists = res.data.items)
+    },
+    async play (trackId) {
+      await this.startPlayback({
+        deviceId: this.$cookies.get('active-device'),
+        uris: this.uris,
+        trackId,
+        position_ms: this.currentTrack ? this.currentTrack.progress_ms : 0
+      })
+      await this.getPlayback()
+    },
+    async pause () {
+      await this.pausePlayback()
+      await this.getPlayback()
     }
+  },
+  computed: {
+    ...mapState({
+      currentTrack: state => state.playback.currentTrack,
+      uris: state => state.playback.uris
+    })
   }
 }
 </script>

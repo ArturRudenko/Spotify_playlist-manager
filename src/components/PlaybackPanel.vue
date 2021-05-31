@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import PlayIcon from '@/components/icons/PlayIcon'
 import PauseIcon from '@/components/icons/PauseIcon'
 import NextIcon from '@/components/icons/NextIcon'
@@ -69,7 +69,8 @@ export default {
   },
   props: {
     currentTrack: {
-      type: Object
+      type: Object,
+      default: () => {}
     }
   },
   data () {
@@ -82,12 +83,25 @@ export default {
         ['startPlayback', 'pausePlayback', 'nextTrack', 'prevTrack', 'repeatTrack', 'getPlayback']
     ),
     async play () {
-      await this.startPlayback({
-        deviceId: this.$cookies.get('active-device'),
-        playlistId: this.currentTrack.context.uri.split(':').slice(2),
-        trackId: this.currentTrack.item.id,
-        position_ms: this.currentTrack.progress_ms
-      })
+      let playbackObj = {}
+
+      if (this.uris && this.uris.length > 0) {
+        playbackObj = {
+          deviceId: this.$cookies.get('active-device'),
+          uris: this.uris,
+          trackId: this.currentTrack.item.id,
+          position_ms: this.currentTrack.progress_ms
+        }
+      } else {
+        playbackObj = {
+          deviceId: this.$cookies.get('active-device'),
+          playlistId: this.currentTrack.context.uri.split(':').slice(2),
+          trackId: this.currentTrack.item.id,
+          position_ms: this.currentTrack.progress_ms
+        }
+      }
+
+      await this.startPlayback(playbackObj)
       await this.getPlayback()
     },
     async pause () {
@@ -107,6 +121,9 @@ export default {
           : this.repeatState === 'context' ? 'track' : 'off'
       await this.repeatTrack(this.repeatState)
     }
+  },
+  computed: {
+    ...mapState({uris: state => state.playback.uris})
   }
 }
 </script>

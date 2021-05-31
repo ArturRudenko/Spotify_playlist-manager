@@ -3,7 +3,13 @@ import Vue from 'vue'
 export default {
   namespaced: true,
   state: {
-    currentTrack: null
+    currentTrack: null,
+    uris: null
+  },
+  mutations: {
+    SET_URIS (state, uris) {
+      state.uris = uris
+    }
   },
   actions: {
     async startPlayback (store, queryObj) {
