@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     ...mapActions('playlist', ['search', 'addTrack', 'getPlaylists']),
-    ...mapActions('playback', ['startPlayback', 'pausePlayback', 'getPlayback']),
+    ...mapActions('playback', ['startPlayback', 'pausePlayback']),
     ...mapMutations('playback', ['SET_URIS']),
     async searchTracks (value) {
       value && value > 0
@@ -131,19 +131,18 @@ export default {
         deviceId: this.$cookies.get('active-device'),
         uris: this.uris,
         trackId,
-        position_ms: this.currentTrack ? this.currentTrack.progress_ms : 0
+        position_ms: this.progress
       })
-      await this.getPlayback()
     },
     async pause () {
       await this.pausePlayback()
-      await this.getPlayback()
     }
   },
   computed: {
     ...mapState({
       currentTrack: state => state.playback.currentTrack,
-      uris: state => state.playback.uris
+      uris: state => state.playback.uris,
+      progress: state => state.playback.progress
     })
   }
 }

@@ -63,11 +63,14 @@ export default {
     FolderIcon
   },
   computed: {
-    ...mapState({ currentTrack: state => state.playback.currentTrack })
+    ...mapState({
+      currentTrack: state => state.playback.currentTrack,
+      progress: state => state.playback.progress
+    })
   },
   methods: {
     ...mapActions('playlist', ['getPlaylist', 'getTracks', 'removeTrack']),
-    ...mapActions('playback', ['startPlayback', 'pausePlayback', 'getPlayback']),
+    ...mapActions('playback', ['startPlayback', 'pausePlayback']),
     async onRemove (id) {
       await this.removeTrack({
         playlistId: this.playlistId,
@@ -81,14 +84,11 @@ export default {
         deviceId: this.$cookies.get('active-device'),
         playlistId: this.playlistId,
         trackId,
-        position_ms: this.currentTrack ? this.currentTrack.progress_ms : 0
+        position_ms: this.progress
       })
-      await this.getPlayback()
     },
     async pause () {
-      console.log(this.currentTrack)
       await this.pausePlayback()
-      await this.getPlayback()
     }
   },
   async created() {

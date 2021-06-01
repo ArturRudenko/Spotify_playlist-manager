@@ -13,6 +13,12 @@
         <p class="playback-panel__author">{{ currentTrack.item.artists[0].name }}</p>
       </div>
     </div>
+    <TimeLine
+      :duration="currentTrack.item.duration_ms"
+      :current-progress="progress"
+      :is-playing="currentTrack.is_playing"
+      class="playback-panel__line"
+    />
     <div class="playback-panel__controls">
       <div class="playback-panel__buttons">
         <next-icon
@@ -46,7 +52,6 @@
           </span>
         </div>
       </div>
-      <div class="playback-panel__timeline" />
     </div>
     <div class="playback-panel__volume" />
   </div>
@@ -58,6 +63,7 @@ import PlayIcon from '@/components/icons/PlayIcon'
 import PauseIcon from '@/components/icons/PauseIcon'
 import NextIcon from '@/components/icons/NextIcon'
 import RepeatIcon from '@/components/icons/RepeatIcon'
+import TimeLine from '@/components/TimeLine'
 
 export default {
   name: 'PlaybackPanel',
@@ -65,12 +71,20 @@ export default {
     PlayIcon,
     PauseIcon,
     NextIcon,
-    RepeatIcon
+    RepeatIcon,
+    TimeLine
   },
   props: {
     currentTrack: {
       type: Object,
       default: () => {}
+    }
+  },
+  watch: {
+    progress (value) {
+      if (value >= this.currentTrack.item.duration_ms) {
+        this.setPlayback()
+      }
     }
   },
   data () {
@@ -80,7 +94,7 @@ export default {
   },
   methods: {
     ...mapActions('playback',
-        ['startPlayback', 'pausePlayback', 'nextTrack', 'prevTrack', 'repeatTrack', 'getPlayback']
+        ['startPlayback', 'pausePlayback', 'nextTrack', 'prevTrack', 'repeatTrack', 'setPlayback']
     ),
     async play () {
       let playbackObj = {}
@@ -90,31 +104,27 @@ export default {
           deviceId: this.$cookies.get('active-device'),
           uris: this.uris,
           trackId: this.currentTrack.item.id,
-          position_ms: this.currentTrack.progress_ms
+          position_ms: this.progress
         }
       } else {
         playbackObj = {
           deviceId: this.$cookies.get('active-device'),
           playlistId: this.currentTrack.context.uri.split(':').slice(2),
           trackId: this.currentTrack.item.id,
-          position_ms: this.currentTrack.progress_ms
+          position_ms: this.progress
         }
       }
 
       await this.startPlayback(playbackObj)
-      await this.getPlayback()
     },
     async pause () {
       await this.pausePlayback()
-      await this.getPlayback()
     },
     async next () {
       await this.nextTrack()
-      await this.getPlayback()
     },
     async prev () {
       await this.prevTrack()
-      await this.getPlayback()
     },
     async repeat () {
       this.repeatState = this.repeatState === 'off' ? 'context'
@@ -123,7 +133,10 @@ export default {
     }
   },
   computed: {
-    ...mapState({uris: state => state.playback.uris})
+    ...mapState({
+      uris: state => state.playback.uris,
+      progress: state => state.playback.progress
+    })
   }
 }
 </script>
@@ -152,11 +165,11 @@ export default {
     display: flex;
     align-items: center;
   }
+  &__line {
+    margin: 0 auto;
+  }
   &__track {
       margin-bottom: 3px;
-  }
-  &__controls {
-      margin-left: auto;
   }
   &__button {
       min-width: 23px;

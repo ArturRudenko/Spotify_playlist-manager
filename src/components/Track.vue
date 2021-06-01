@@ -16,7 +16,7 @@
       />
     </div>
     <div class="track__right">
-      <span>{{ duration }}</span>
+      <span>{{ trackDuration | durationFilter }}</span>
       <div
         class="track__options track-options"
         v-if="changeable"
@@ -49,6 +49,7 @@
 import OptionsIcon from '@/components/icons/OptionsIcon'
 import PlayIcon from '@/components/icons/PlayIcon'
 import PauseIcon from '@/components/icons/PauseIcon'
+import durationFilter from '@/utils/durationFilter'
 
 export default {
   name: 'Track',
@@ -109,19 +110,10 @@ export default {
   },
   data () {
     return {
-      showOptions: false,
-      duration: 0
+      showOptions: false
     }
   },
-  created () {
-    let num = (this.trackDuration/60000).toFixed(2).split('.')
-    if (num[1] > 60) {
-      num[0]++
-      num[1] = num[1] - 60
-    }
-    if (num[1] < 10 && !String(num[1]).startsWith('0')) num[1] = `0${num[1]}`
-    this.duration = num.join(':')
-  }
+  filters: { durationFilter }
 }
 </script>
 
